@@ -6,6 +6,8 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Services from './pages/Services';
 import Contact from './pages/Contact';
+import ClientPortal from './pages/ClientPortal';
+import ForgotPassword from './pages/ForgotPassword';
 import { theme } from './styles/theme';
 
 const AppContainer = styled.div`
@@ -31,6 +33,8 @@ const App = () => {
             <Route path="/about" element={<About />} />
             <Route path="/services" element={<Services />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/client-portal" element={<ClientPortal />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
           </Routes>
         </MainContent>
         <Footer />
