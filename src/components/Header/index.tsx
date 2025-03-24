@@ -113,11 +113,11 @@ const MobileMenuButton = styled.button`
   }
 `;
 
-const MobileMenu = styled.div<{ isOpen: boolean }>`
+const MobileMenu = styled.div`
   display: none;
   position: fixed;
   top: 0;
-  right: ${props => props.isOpen ? '0' : '-100%'};
+  right: -100%;
   width: 80%;
   max-width: 300px;
   height: 100vh;
@@ -126,6 +126,10 @@ const MobileMenu = styled.div<{ isOpen: boolean }>`
   transition: right 0.3s ease;
   z-index: 1001;
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+
+  &[data-is-open="true"] {
+    right: 0;
+  }
 
   @media (max-width: 768px) {
     display: block;
@@ -180,7 +184,7 @@ const Header = () => {
           <FontAwesomeIcon icon={faBars} />
         </MobileMenuButton>
       </HeaderContent>
-      <MobileMenu isOpen={isMobileMenuOpen}>
+      <MobileMenu data-is-open={isMobileMenuOpen}>
         <CloseButton onClick={() => setIsMobileMenuOpen(false)}>
           <FontAwesomeIcon icon={faTimes} />
         </CloseButton>
