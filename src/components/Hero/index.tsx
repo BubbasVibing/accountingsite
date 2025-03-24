@@ -63,15 +63,6 @@ const HeroText = styled.div`
   padding-top: 2rem;
 `;
 
-const HeroImage = styled.div`
-  position: relative;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  padding: 2rem;
-  background: transparent;
-`;
-
 const Title = styled.h1`
   font-size: 4rem;
   margin-bottom: 1.5rem;
@@ -250,20 +241,18 @@ const Hero = () => {
             </ServiceLink>
             <ServiceLink to="/services#payroll">
               <FontAwesomeIcon icon={faFileAlt} />
-              Payroll & Bookkeeping
+              Payroll Services
             </ServiceLink>
-            <ServiceLink to="/services#immigration">
+            <ServiceLink to="/services#consulting">
               <FontAwesomeIcon icon={faHandshake} />
-              Immigration Services
+              Business Consulting
             </ServiceLink>
-            <ServiceLink to="/services#translation">
+            <ServiceLink to="/services#international">
               <FontAwesomeIcon icon={faLanguage} />
-              Translation & Notary
+              International Tax
             </ServiceLink>
           </ServicesList>
-          <SeeAllServices to="/services">
-            See all of our services →
-          </SeeAllServices>
+          <SeeAllServices to="/services">View All Services →</SeeAllServices>
         </ServicesCard>
       </HeroContent>
     </HeroSection>
