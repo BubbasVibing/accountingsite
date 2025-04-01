@@ -1,14 +1,15 @@
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faQuestionCircle, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faQuestionCircle, faChevronRight, faEnvelope, faPhone, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
+import { theme } from '../../styles/theme';
 
 const ContactSection = styled.section`
   background: white;
 `;
 
 const HeroSection = styled.div`
-  background: linear-gradient(135deg, rgba(44, 62, 80, 0.98) 0%, rgba(52, 152, 219, 0.98) 100%);
+  background: url('/images/philadelphia.png') center/cover no-repeat;
   padding: 8rem 2rem;
   text-align: center;
   position: relative;
@@ -21,8 +22,8 @@ const HeroSection = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('/pattern.png') repeat;
-    opacity: 0.05;
+    background: ${theme.colors.primary};
+    opacity: 0.75;
   }
 
   &::after {
@@ -32,8 +33,10 @@ const HeroSection = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('/hero-pattern.svg') repeat;
-    opacity: 0.1;
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+    pointer-events: none;
   }
 `;
 
@@ -54,7 +57,7 @@ const HeroTitle = styled.h1`
   position: relative;
   display: inline-block;
   font-family: 'Poppins', sans-serif;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 
   &::after {
     content: '';
@@ -63,8 +66,8 @@ const HeroTitle = styled.h1`
     left: 50%;
     transform: translateX(-50%);
     width: 100px;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.9);
+    height: 4px;
+    background: ${theme.colors.secondary};
     border-radius: 2px;
   }
 `;
@@ -91,6 +94,69 @@ const Container = styled.div`
   margin: 0 auto;
 `;
 
+const ContactInfoSection = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 4rem;
+
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const ContactInfoCard = styled.a`
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-10px);
+    border-bottom: 3px solid ${theme.colors.secondary};
+  }
+
+  .icon {
+    background: rgba(166, 207, 79, 0.1);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: ${theme.colors.secondary};
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  &:hover .icon {
+    background: ${theme.colors.secondary};
+    color: white;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    color: ${theme.colors.primary};
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: ${theme.colors.text.secondary};
+    line-height: 1.6;
+  }
+`;
+
 const ContactGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -105,27 +171,40 @@ const ContactGrid = styled.div`
 
 const FAQSection = styled.div`
   background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 `;
 
 const FAQTitle = styled.h2`
-  font-size: 1.8rem;
-  color: #2c3e50;
+  font-size: 2rem;
+  color: ${theme.colors.primary};
   margin-bottom: 2rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
+  position: relative;
+  padding-bottom: 1rem;
 
-  i {
-    color: #3498db;
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: ${theme.colors.secondary};
+    border-radius: 2px;
+  }
+
+  .icon {
+    color: ${theme.colors.secondary};
   }
 `;
 
 const FAQItem = styled.div`
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding-bottom: 1.5rem;
 
   &:last-child {
@@ -144,21 +223,22 @@ const FAQQuestion = styled.div`
   transition: color 0.3s ease;
 
   &:hover {
-    color: #3498db;
+    color: ${theme.colors.secondary};
   }
 
   h3 {
     font-size: 1.1rem;
     font-weight: 600;
     margin: 0;
+    color: ${theme.colors.primary};
   }
 
-  i {
+  .icon {
     transition: transform 0.3s ease;
-    color: #3498db;
+    color: ${theme.colors.secondary};
   }
 
-  &.open i {
+  &.open .icon {
     transform: rotate(90deg);
   }
 `;
@@ -170,7 +250,7 @@ const FAQAnswer = styled.div<{ isOpen: boolean }>`
   margin-top: ${props => props.isOpen ? '1rem' : '0'};
 
   p {
-    color: #666;
+    color: ${theme.colors.text.secondary};
     line-height: 1.6;
     margin: 0;
     padding-right: 1rem;
@@ -179,15 +259,28 @@ const FAQAnswer = styled.div<{ isOpen: boolean }>`
 
 const ContactForm = styled.form`
   background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 `;
 
 const FormTitle = styled.h2`
-  font-size: 1.8rem;
-  color: #2c3e50;
+  font-size: 2rem;
+  color: ${theme.colors.primary};
   margin-bottom: 2rem;
+  position: relative;
+  padding-bottom: 1rem;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: ${theme.colors.secondary};
+    border-radius: 2px;
+  }
 `;
 
 const FormGroup = styled.div`
@@ -201,46 +294,48 @@ const FormGroup = styled.div`
 const Label = styled.label`
   display: block;
   margin-bottom: 0.5rem;
-  color: #2c3e50;
+  color: ${theme.colors.primary};
   font-weight: 500;
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 0.8rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  padding: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
 
   &:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: ${theme.colors.secondary};
+    box-shadow: 0 0 0 3px rgba(166, 207, 79, 0.1);
   }
 `;
 
 const TextArea = styled.textarea`
   width: 100%;
-  padding: 0.8rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  padding: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
   font-size: 1rem;
   min-height: 150px;
   resize: vertical;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
 
   &:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: ${theme.colors.secondary};
+    box-shadow: 0 0 0 3px rgba(166, 207, 79, 0.1);
   }
 `;
 
 const SubmitButton = styled.button`
-  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-  color: white;
+  background: ${theme.colors.secondary};
+  color: ${theme.colors.primary};
   padding: 1rem 2rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -250,8 +345,9 @@ const SubmitButton = styled.button`
   letter-spacing: 0.5px;
 
   &:hover {
+    background: #b8e15f;
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+    box-shadow: 0 4px 15px rgba(166, 207, 79, 0.3);
   }
 `;
 
@@ -300,10 +396,40 @@ const Contact = () => {
 
       <ContentSection>
         <Container>
+          <ContactInfoSection>
+            <ContactInfoCard href="tel:+15551234567">
+              <div className="icon">
+                <FontAwesomeIcon icon={faPhone} />
+              </div>
+              <h3>Phone</h3>
+              <p>+1 (555) 123-4567</p>
+            </ContactInfoCard>
+            
+            <ContactInfoCard href="mailto:info@naseemcpa.com">
+              <div className="icon">
+                <FontAwesomeIcon icon={faEnvelope} />
+              </div>
+              <h3>Email</h3>
+              <p>info@naseemcpa.com</p>
+            </ContactInfoCard>
+            
+            <ContactInfoCard 
+              href="https://www.google.com/maps?q=5238+4249+Walnut+St,+Philadelphia,+PA+19104"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="icon">
+                <FontAwesomeIcon icon={faMapMarkerAlt} />
+              </div>
+              <h3>Location</h3>
+              <p>5238, 4249 Walnut St, Philadelphia, PA 19104</p>
+            </ContactInfoCard>
+          </ContactInfoSection>
+
           <ContactGrid>
             <FAQSection>
               <FAQTitle>
-                <FontAwesomeIcon icon={faQuestionCircle} />
+                <FontAwesomeIcon icon={faQuestionCircle} className="icon" />
                 Frequently Asked Questions
               </FAQTitle>
               {faqs.map((faq, index) => (
@@ -313,7 +439,7 @@ const Contact = () => {
                     onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
                   >
                     <h3>{faq.question}</h3>
-                    <FontAwesomeIcon icon={faChevronRight} />
+                    <FontAwesomeIcon icon={faChevronRight} className="icon" />
                   </FAQQuestion>
                   <FAQAnswer isOpen={openFAQ === index}>
                     <p>{faq.answer}</p>
