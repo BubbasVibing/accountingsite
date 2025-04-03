@@ -1,4 +1,5 @@
-import styled, { keyframes } from 'styled-components';
+import { useState, useEffect, useRef } from 'react';
+import styled, { keyframes, css } from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -9,21 +10,31 @@ import {
   faGlobe, 
   faLanguage,
   faCheckCircle,
-  faArrowRight,
   faShieldAlt,
   faChartBar,
   faFileInvoiceDollar,
   faHandshake,
   faLightbulb,
-  faUsers
+  faUsers,
+  faCalculator,
+  faTrophy,
+  faUniversity,
+  faComments,
+  faArrowAltCircleRight,
+  faCogs,
+  faBullseye,
+  faBalanceScale,
+  faBookOpen,
+  faStamp,
+  faStar,
+  faChevronLeft
 } from '@fortawesome/free-solid-svg-icons';
 import { theme } from '../../styles/theme';
-import { useRef, useEffect, useState } from 'react';
 
 // Animation keyframes
 const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 `;
 
 const slideInLeft = keyframes`
@@ -36,419 +47,6 @@ const slideInRight = keyframes`
   to { transform: translateX(0); opacity: 1; }
 `;
 
-// Add more keyframe animations
-const rotateIn = keyframes`
-  from { transform: rotate(-10deg) scale(0.9); opacity: 0; }
-  to { transform: rotate(0) scale(1); opacity: 1; }
-`;
-
-const fadeInUp = keyframes`
-  from { transform: translateY(30px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-`;
-
-const pulse = keyframes`
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-`;
-
-const ServicesSection = styled.section`
-  background: white;
-`;
-
-const HeroSection = styled.div`
-  padding: 10rem 2rem 6rem;
-  position: relative;
-  overflow: hidden;
-  background: url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80') center/cover no-repeat;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: ${theme.colors.primary};
-    opacity: 0.7;
-  }
-`;
-
-const Container = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 2;
-`;
-
-const HeroContent = styled.div`
-  text-align: center;
-  color: white;
-  max-width: 800px;
-  margin: 0 auto;
-`;
-
-const HeroTitle = styled.h1`
-  font-size: 3.5rem;
-  margin-bottom: 1.5rem;
-  font-weight: 800;
-  position: relative;
-  display: inline-block;
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 4px;
-    background: ${theme.colors.secondary};
-    border-radius: 2px;
-  }
-`;
-
-const HeroSubtitle = styled.p`
-  font-size: 1.2rem;
-  line-height: 1.8;
-  margin-top: 1.5rem;
-`;
-
-const ServiceBlock = styled.div`
-  padding: 6rem 2rem;
-
-  &:nth-child(even) {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  }
-`;
-
-const ServiceContent = styled.div<{ reverse?: boolean }>`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: center;
-  
-  @media (max-width: 992px) {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
-  
-  ${props => props.reverse && `
-    @media (min-width: 993px) {
-      direction: rtl;
-      
-      > div {
-        direction: ltr;
-      }
-    }
-  `}
-`;
-
-const ServiceInfo = styled.div`
-  animation: ${slideInLeft} 0.8s ease-out forwards;
-  opacity: 0;
-  
-  h2 {
-    font-size: 2.5rem;
-    color: ${theme.colors.primary};
-    margin-bottom: 1.5rem;
-    position: relative;
-    padding-bottom: 1rem;
-
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 80px;
-      height: 3px;
-      background: ${theme.colors.secondary};
-      border-radius: 2px;
-    }
-  }
-
-  p {
-    font-size: 1.1rem;
-    color: ${theme.colors.text.secondary};
-    line-height: 1.7;
-    margin-bottom: 2rem;
-  }
-`;
-
-const ServiceImage = styled.div`
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-  position: relative;
-  animation: ${slideInRight} 0.8s ease-out forwards;
-  opacity: 0;
-  
-  img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-`;
-
-const ServiceFeatureList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 0 0 2rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  
-  @media (max-width: 576px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const ServiceFeatureItem = styled.li`
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  color: ${theme.colors.text.secondary};
-  font-weight: 500;
-  
-  .icon {
-    color: ${theme.colors.secondary};
-    font-size: 1.2rem;
-  }
-`;
-
-const ServiceCTA = styled(Link)`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: ${theme.colors.secondary};
-  color: ${theme.colors.primary};
-  padding: 0.8rem 1.5rem;
-  border-radius: 50px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(166, 207, 79, 0.3);
-    
-    .icon {
-      transform: translateX(3px);
-    }
-  }
-  
-  .icon {
-    transition: transform 0.3s ease;
-  }
-`;
-
-const CTASection = styled.section`
-  padding: 6rem 2rem;
-  background: ${theme.colors.primary};
-  position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('https://images.unsplash.com/photo-1559526324-593bc073d938?auto=format&fit=crop&q=80') center/cover no-repeat;
-    opacity: 0.1;
-  }
-`;
-
-const CTAContent = styled.div`
-  text-align: center;
-  color: white;
-  max-width: 800px;
-  margin: 0 auto;
-  
-  h2 {
-    font-size: 2.5rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  p {
-    font-size: 1.2rem;
-    line-height: 1.8;
-    margin-bottom: 2.5rem;
-    opacity: 0.9;
-  }
-`;
-
-const CTAButton = styled(Link)`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: ${theme.colors.secondary};
-  color: ${theme.colors.primary};
-  padding: 1rem 2rem;
-  border-radius: 50px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    
-    .icon {
-      transform: translateX(3px);
-    }
-  }
-  
-  .icon {
-    transition: transform 0.3s ease;
-  }
-`;
-
-// Hook for animation on scroll
-const useElementOnScreen = (options: IntersectionObserverInit) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, options);
-    
-    const elements = containerRef.current?.querySelectorAll('.animate-on-scroll');
-    if (elements) {
-      elements.forEach(el => observer.observe(el));
-    }
-    
-    return () => {
-      if (elements) {
-        elements.forEach(el => observer.unobserve(el));
-      }
-    };
-  }, [options]);
-  
-  return containerRef;
-};
-
-// Unique section styles
-const BusinessServiceBlock = styled(ServiceBlock)`
-  position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: -100px;
-    right: -100px;
-    width: 300px;
-    height: 300px;
-    background: ${theme.colors.secondary}20;
-    border-radius: 50%;
-    z-index: 0;
-  }
-  
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -50px;
-    left: -50px;
-    width: 200px;
-    height: 200px;
-    background: ${theme.colors.primary}10;
-    border-radius: 50%;
-    z-index: 0;
-  }
-`;
-
-const PayrollServiceBlock = styled(ServiceBlock)`
-  background: linear-gradient(135deg, #ffffff 0%, #f0f5ff 100%);
-`;
-
-const PayrollGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-  margin: 3rem 0;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-`;
-
-const PayrollCard = styled.div`
-  background: white;
-  padding: 2.5rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  min-height: 240px;
-  justify-content: center;
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
-  }
-  
-  .icon-wrapper {
-    background: ${theme.colors.secondary}15;
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: ${theme.colors.secondary};
-    margin-bottom: 1.8rem;
-    font-size: 1.8rem;
-  }
-  
-  h3 {
-    font-size: 1.6rem;
-    color: ${theme.colors.primary};
-    margin-bottom: 1.2rem;
-  }
-  
-  p {
-    font-size: 1.15rem;
-    color: ${theme.colors.text.secondary};
-    margin: 0;
-    line-height: 1.6;
-    max-width: 85%;
-    margin: 0 auto;
-  }
-`;
-
-const ImmigrationServiceBlock = styled(ServiceBlock)`
-  background: url('https://images.unsplash.com/photo-1552619020-d8d85d06e734?auto=format&fit=crop&q=80&w=3087&ixlib=rb-4.0.3') right bottom/cover no-repeat fixed;
-  position: relative;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.85) 50%, rgba(255, 255, 255, 0.7) 100%);
-    z-index: 1;
-  }
-`;
-
-const ImmigrationContainer = styled(Container)`
-  position: relative;
-  z-index: 2;
-`;
-
-// Add slide-in and pulse animations for the timeline
 const slideInUp = keyframes`
   from { 
     transform: translateY(30px);
@@ -466,135 +64,39 @@ const pulseGlow = keyframes`
   100% { box-shadow: 0 0 0 0 rgba(166, 207, 79, 0); }
 `;
 
-// Update the ImmigrationTimeline styling
-const ImmigrationTimeline = styled.div`
-  position: relative;
-  margin: 3rem 0;
-  padding-left: 2.5rem;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: #e0e0e0; /* Grey color for the timeline bar */
-    border-radius: 3px;
-  }
+const rotateIn = keyframes`
+  from { transform: rotate(-15deg) scale(0.9); opacity: 0; }
+  to { transform: rotate(0) scale(1); opacity: 1; }
 `;
 
-// Update the TimelineItem styling
-const TimelineItem = styled.div`
-  position: relative;
-  padding-bottom: 2.5rem;
-  animation: ${slideInUp} 0.8s cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
-  opacity: 0;
-  cursor: pointer;
-  
-  &:nth-child(1) { animation-delay: 0.1s; }
-  &:nth-child(2) { animation-delay: 0.3s; }
-  &:nth-child(3) { animation-delay: 0.5s; }
-  &:nth-child(4) { animation-delay: 0.7s; }
-  
-  &:last-child {
-    padding-bottom: 0;
-  }
-  
-  &::before {
-    content: '';
-    position: absolute;
-    left: -2.5rem;
-    top: 0.5rem;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #b0b0b0; /* Grey color for inactive circles */
-    border: 3px solid white;
-    box-shadow: 0 0 0 3px rgba(176, 176, 176, 0.3); /* Grey shadow for inactive */
-    animation: none; /* No animation by default */
-    transition: all 0.3s ease;
-  }
-  
-  &:hover::before {
-    animation: ${pulseGlow} 1s infinite;
-    background: #c8c8c8; /* Lighter grey on hover */
-  }
-  
-  h3 {
-    font-size: 1.3rem;
-    color: ${theme.colors.primary};
-    margin-bottom: 0.5rem;
-    transition: transform 0.3s ease;
-  }
-  
-  p {
-    font-size: 1rem;
-    color: ${theme.colors.text.secondary};
-    margin: 0;
-    max-width: 90%;
-    transition: all 0.3s ease;
-  }
-  
-  &:hover {
-    h3 {
-      transform: translateX(5px);
-      color: ${theme.colors.secondary};
-    }
-    
-    p {
-      transform: translateX(5px);
-    }
-  }
-  
-  &.active {
-    h3 {
-      color: ${theme.colors.secondary};
-      font-weight: 700;
-    }
-    
-    &::before {
-      background: ${theme.colors.secondary}; /* Green color for active circle */
-      animation: ${pulseGlow} 1s infinite;
-      width: 20px;
-      height: 20px;
-      left: -2.6rem;
-      top: 0.3rem;
-      box-shadow: 0 0 0 3px ${theme.colors.secondary}50; /* Green shadow for active */
-    }
-  }
-`;
-
-// Update the ImmigrationButton styling
-const ImmigrationButton = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  margin-top: 2.5rem;
-  padding-left: 2.5rem;
-`;
-
-const TranslationServiceBlock = styled(ServiceBlock)`
-  background: white;
-`;
-
-const TranslationGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-  margin: 3rem 0;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const TranslationCard = styled.div`
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-radius: 16px;
-  padding: 2rem;
-  transition: all 0.3s ease;
+// Shared styles
+const SectionBase = css`
+  padding: 6rem 0;
   position: relative;
   overflow: hidden;
+`;
+
+// Basic styled components
+const ServicesSection = styled.section`
+  background: white;
+  overflow-x: hidden;
+`;
+
+const HeroSection = styled.div`
+  padding: 12rem 2rem 8rem;
+  position: relative;
+  overflow: hidden;
+  background: url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80') center/cover no-repeat;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, ${theme.colors.primary}f0, ${theme.colors.primary}99);
+  }
   
   &::after {
     content: '';
@@ -602,177 +104,299 @@ const TranslationCard = styled.div`
     top: 0;
     left: 0;
     right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 40%);
+  }
+`;
+
+const Container = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  padding: 0 2rem;
+`;
+
+const HeroContent = styled.div`
+  text-align: center;
+  color: white;
+  max-width: 900px;
+  margin: 0 auto;
+  animation: ${fadeIn} 1.2s ease;
+`;
+
+const HeroTitle = styled.h1`
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  font-weight: 800;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(to right, #ffffff, #f0f0f0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  @media (max-width: 768px) {
+    font-size: 3rem;
+  }
+`;
+
+const HeroSubtitle = styled.p`
+  font-size: 1.4rem;
+  line-height: 1.8;
+  margin-top: 1.5rem;
+  font-weight: 400;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
+`;
+
+const HeroButton = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: ${theme.colors.secondary};
+  color: ${theme.colors.primary};
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-top: 2rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+const ServiceBlock = styled.section`
+  ${SectionBase}
+  background: white;
+  
+  &:nth-child(even) {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  }
+  
+  &.highlight-section {
+    background: linear-gradient(135deg, #f0f7e6 0%, #e8f5d8 100%);
+  }
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 2.75rem;
+  color: ${theme.colors.primary};
+  margin-bottom: 1rem;
+  text-align: center;
+  position: relative;
+  padding-bottom: 1.5rem;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
     height: 4px;
     background: ${theme.colors.secondary};
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s ease;
+    border-radius: 2px;
   }
   
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-    
-    &::after {
-      transform: scaleX(1);
-    }
-  }
-  
-  h3 {
-    font-size: 1.5rem;
-    color: ${theme.colors.primary};
-    margin-bottom: 1rem;
-  }
-  
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    
-    li {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      color: ${theme.colors.text.secondary};
-      margin-bottom: 0.8rem;
-      
-      .icon {
-        color: ${theme.colors.secondary};
-      }
-    }
+  @media (max-width: 768px) {
+    font-size: 2.25rem;
   }
 `;
 
-// Add these additional styled components for the new Business Services section
-const BusinessContent = styled.div`
-  padding: 2rem 0;
-`;
-
-const BusinessHeader = styled.div`
+const SectionDescription = styled.p`
+  font-size: 1.25rem;
+  color: ${theme.colors.text.secondary};
   text-align: center;
-  margin-bottom: 3rem;
-  position: relative;
+  max-width: 800px;
+  margin: 0 auto 4rem;
+  line-height: 1.7;
   
-  h2 {
-    font-size: 2.8rem;
-    color: ${theme.colors.primary};
-    margin-bottom: 1.5rem;
-    position: relative;
-    display: inline-block;
-    
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 3px;
-      background: ${theme.colors.secondary};
-      border-radius: 2px;
-    }
-  }
-  
-  p {
-    max-width: 800px;
-    margin: 0 auto;
+  @media (max-width: 768px) {
     font-size: 1.1rem;
-    color: ${theme.colors.text.secondary};
-    line-height: 1.7;
+    margin-bottom: 3rem;
   }
 `;
 
-const BusinessTabsContainer = styled.div`
-  margin: 2rem 0 3rem;
-`;
-
-const TabsWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-  }
-`;
-
-const TabButton = styled.button<{ isActive: boolean }>`
-  background: ${props => props.isActive ? theme.colors.primary : 'white'};
-  color: ${props => props.isActive ? 'white' : theme.colors.primary};
-  border: 2px solid ${theme.colors.primary};
-  padding: 0.8rem 1.5rem;
-  border-radius: 30px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: ${props => props.isActive ? theme.colors.primary : `${theme.colors.primary}10`};
-    transform: translateY(-2px);
-  }
-  
-  @media (max-width: 768px) {
-    width: 100%;
-    max-width: 300px;
-  }
-`;
-
-const TabContent = styled.div`
-  background: white;
-  border-radius: 16px;
-  padding: 3rem;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  
-  @media (max-width: 768px) {
-    padding: 2rem;
-  }
-`;
-
-const TabContentGrid = styled.div`
+const ServicesGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  align-items: center;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+  margin-top: 3rem;
   
-  @media (max-width: 992px) {
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 768px) {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
 `;
 
-const TabContentImageWrapper = styled.div`
+// Enhanced Professional Services section
+const ProfessionalServices = styled.div`
+  margin-top: 4rem;
   position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+`;
+
+// New creative service layout
+const ServiceGallery = styled.div`
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 2rem;
+  position: relative;
   
-  img {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
     width: 100%;
-    height: auto;
-    display: block;
+    height: 1px;
+    background: radial-gradient(ellipse at center, rgba(166, 207, 79, 0.3), transparent 80%);
+    z-index: 1;
+  }
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(1, 1fr);
+    padding: 0 2rem;
+  }
+`;
+
+const ServiceModule = styled.div<{size?: string}>`
+  position: relative;
+  z-index: 2;
+  grid-column: ${props => props.size === 'large' ? 'span 8' : 'span 4'};
+  
+  @media (max-width: 1024px) {
+    grid-column: span 1;
+  }
+`;
+
+const ServiceItem = styled.div<{position?: string}>`
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: ${props => props.position === 'horizontal' ? 'row' : 'column'};
+  transform-origin: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  @media (max-width: 1024px) {
+    flex-direction: column;
+  }
+  
+  &:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    z-index: 3;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: ${theme.colors.secondary};
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+    z-index: 1;
+  }
+  
+  &:hover::before {
+    transform: scaleX(1);
+  }
+`;
+
+const ServiceVisual = styled.div<{bg?: string}>`
+  flex: ${props => props.bg ? '0 0 40%' : '0'};
+  background: ${props => props.bg ? `url(${props.bg}) center/cover no-repeat` : theme.colors.primary};
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: ${props => props.bg ? '300px' : 'auto'};
+  overflow: hidden;
+  
+  @media (max-width: 1024px) {
+    min-height: 200px;
   }
   
   &::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    top: 0;
     left: 0;
-    right: 0;
-    height: 5px;
-    background: ${theme.colors.secondary};
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(19, 42, 76, 0.5), rgba(19, 42, 76, 0.8));
+    z-index: 1;
   }
 `;
 
-const TabContentInfo = styled.div`
-  h3 {
-    font-size: 2rem;
+const ServiceIconWrapper = styled.div<{serviceCategory?: string}>`
+  width: 90px;
+  height: 90px;
+  background: ${props => {
+    if (props.serviceCategory === 'wealth-management' || 
+        props.serviceCategory === 'compliance' ||
+        props.serviceCategory === 'business-services' ||
+        props.serviceCategory === 'payroll') {
+      return theme.colors.primary + '20'; // Light primary color
+    }
+    return 'rgba(255, 255, 255, 0.1)';
+  }};
+  backdrop-filter: blur(5px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${props => {
+    if (props.serviceCategory === 'wealth-management' || 
+        props.serviceCategory === 'compliance' ||
+        props.serviceCategory === 'business-services' ||
+        props.serviceCategory === 'payroll') {
+      return theme.colors.primary;
+    }
+    return 'white';
+  }};
+  font-size: 2.5rem;
+  z-index: 2;
+  position: relative;
+  transition: all 0.5s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  
+  ${ServiceItem}:hover & {
+    transform: scale(1.1) rotate(10deg);
+    background: ${theme.colors.secondary};
     color: ${theme.colors.primary};
-    margin-bottom: 1.5rem;
+  }
+`;
+
+const ServiceContent = styled.div`
+  padding: 2.5rem;
+  flex: 1;
+  
+  h3 {
+    font-size: 1.8rem;
+    color: ${theme.colors.primary};
+    margin-bottom: 1rem;
     position: relative;
     padding-bottom: 1rem;
     
@@ -781,941 +405,1300 @@ const TabContentInfo = styled.div`
       position: absolute;
       bottom: 0;
       left: 0;
-      width: 60px;
+      width: 40px;
       height: 3px;
       background: ${theme.colors.secondary};
-      border-radius: 2px;
+      transition: width 0.3s ease;
     }
   }
   
+  ${ServiceItem}:hover h3::after {
+    width: 80px;
+  }
+  
   p {
-    font-size: 1.1rem;
     color: ${theme.colors.text.secondary};
     line-height: 1.7;
     margin-bottom: 1.5rem;
   }
 `;
 
-const BenefitsList = styled.ul`
+const ServiceFeatures = styled.ul`
   list-style: none;
   padding: 0;
-  margin: 0 0 2rem;
-`;
-
-const BenefitItem = styled.li`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  margin: 0 0 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.8rem;
   
-  .icon-wrapper {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: ${theme.colors.secondary}15;
+  li {
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: ${theme.colors.secondary};
-    flex-shrink: 0;
-  }
-  
-  div {
-    h4 {
-      font-size: 1.1rem;
-      color: ${theme.colors.primary};
-      margin-bottom: 0.2rem;
-    }
+    gap: 0.7rem;
+    padding: 0.5rem 0;
+    color: ${theme.colors.text.secondary};
     
-    p {
-      font-size: 0.95rem;
-      margin: 0;
+    .icon {
+      color: ${theme.colors.secondary};
+      flex-shrink: 0;
     }
   }
 `;
 
-// Add a styled component for the expertise card
-const ExpertiseCard = styled.div`
-  background: white;
-  padding: 2.5rem;
-  border-radius: 16px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+const ServiceActions = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+  
+  @media (max-width: 480px) {
+    flex-direction: column;
+  }
+`;
+
+const ServiceButton = styled(Link)<{variant?: string}>`
+  padding: 0.9rem 1.5rem;
+  background: ${props => props.variant === 'primary' ? theme.colors.primary : 'transparent'};
+  color: ${props => props.variant === 'primary' ? 'white' : theme.colors.primary};
+  border: 2px solid ${props => props.variant === 'primary' ? theme.colors.primary : 'transparent'};
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   transition: all 0.3s ease;
+  justify-content: center;
+  
+  .icon {
+    transition: transform 0.3s ease;
+  }
   
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-  }
-  
-  h3 {
-    font-size: 1.8rem;
-    color: ${theme.colors.primary};
-    margin-bottom: 1.8rem;
-    text-align: center;
-    position: relative;
-    padding-bottom: 1rem;
+    background: ${props => props.variant === 'primary' ? theme.colors.secondary : 'rgba(19, 42, 76, 0.05)'};
+    color: ${props => props.variant === 'primary' ? theme.colors.primary : theme.colors.primary};
+    border-color: ${props => props.variant === 'primary' ? theme.colors.secondary : 'transparent'};
+    transform: translateY(-3px);
     
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
-      height: 3px;
-      background: ${theme.colors.secondary};
-      border-radius: 2px;
+    .icon {
+      transform: translateX(3px);
     }
   }
 `;
 
-const ExpertiseGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.8rem;
+// Enhanced Tab Functionality for Specialty Services
+const ServiceTabs = styled.div`
+  display: flex;
+  padding: 0 1.5rem;
+  margin-top: 2rem;
+  border-bottom: 1px solid #eaeaea;
+`;
+
+const ServiceTab = styled.button<{active?: boolean}>`
+  background: none;
+  border: none;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: ${props => props.active ? theme.colors.primary : theme.colors.text.secondary};
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
   
-  @media (max-width: 576px) {
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    height: 3px;
+    width: ${props => props.active ? '100%' : '0'};
+    background: ${theme.colors.secondary};
+    border-radius: 3px 3px 0 0;
+    transition: all 0.3s ease;
+  }
+  
+  &:hover:not(.active) {
+    color: ${theme.colors.primary};
+    
+    &::after {
+      width: 30%;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    padding: 1rem 0.75rem;
+    font-size: 0.9rem;
+  }
+`;
+
+const ServiceTabContent = styled.div`
+  padding: 2.5rem;
+`;
+
+const ServiceList = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  
+  @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
 `;
 
-const ExpertiseItem = styled.div`
+const CardActions = styled.div`
+  padding: 1.5rem 2.5rem 2.5rem;
   display: flex;
-  gap: 1.2rem;
-  align-items: flex-start;
+  gap: 1rem;
   
-  .icon-container {
-    background: ${theme.colors.secondary}15;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: ${theme.colors.secondary};
-    font-size: 1.2rem;
-    flex-shrink: 0;
+  @media (max-width: 480px) {
+    flex-direction: column;
+  }
+`;
+
+const StatsContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin-top: 5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  position: relative;
+  z-index: 1;
+  
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+`;
+
+const StatItem = styled.div`
+  text-align: center;
+  
+  .value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.5rem;
   }
   
-  .content {
-    h4 {
-      color: ${theme.colors.primary};
-      font-size: 1.2rem;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-    }
+  .label {
+    font-size: 1.1rem;
+    color: ${theme.colors.secondary};
+    opacity: 0.9;
+  }
+  
+  @media (max-width: 768px) {
+    flex: 0 0 45%;
     
-    p {
-      color: ${theme.colors.text.secondary};
-      font-size: 1rem;
-      margin: 0;
-      line-height: 1.5;
+    .value {
+      font-size: 2.5rem;
     }
   }
 `;
 
-// Update the DetailContent component to be smaller and better centered
-const DetailContent = styled.div`
-  padding: 1.8rem;
+// Process Section Components
+const ProcessSection = styled(ServiceBlock)`
   background: white;
-  border-radius: 14px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-  max-width: 90%;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.1), transparent);
+    z-index: 1;
+  }
+`;
+
+const ProcessStepsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  max-width: 1000px;
   margin: 0 auto;
-  height: auto;
+  
+  @media (max-width: 992px) {
+    flex-direction: column;
+    gap: 3rem;
+  }
+`;
+
+const ProcessStep = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 230px;
+  position: relative;
+  z-index: 2;
   
-  h3 {
-    font-size: 1.5rem;
+  @media (max-width: 992px) {
+    width: 100%;
+  }
+`;
+
+const StepNumber = styled.div`
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: ${theme.colors.secondary};
+  color: ${theme.colors.primary};
+  font-size: 1.5rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 15px rgba(166, 207, 79, 0.3);
+`;
+
+const StepContent = styled.div`
+  h4 {
+    font-size: 1.3rem;
     color: ${theme.colors.primary};
+    margin-bottom: 0.8rem;
+  }
+  
+  p {
+    color: ${theme.colors.text.secondary};
+    line-height: 1.6;
+  }
+`;
+
+// CTA Section Components
+const CTASection = styled.section`
+  padding: 6rem 2rem;
+  background: ${theme.colors.primary};
+  position: relative;
+  overflow: hidden;
+  
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    z-index: 1;
+  }
+  
+  &::before {
+    top: -150px;
+    left: -150px;
+  }
+  
+  &::after {
+    bottom: -150px;
+    right: -150px;
+  }
+`;
+
+const CTAContent = styled.div`
+  text-align: center;
+  color: white;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  
+  h2 {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    
+    @media (max-width: 768px) {
+      font-size: 2.5rem;
+    }
+  }
+  
+  p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+    
+    @media (max-width: 768px) {
+      font-size: 1.1rem;
+    }
+  }
+`;
+
+const CTAButton = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: ${theme.colors.secondary};
+  color: ${theme.colors.primary};
+  padding: 1.2rem 3rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  }
+  
+  .icon {
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover .icon {
+    transform: translateX(5px);
+  }
+`;
+
+// Enhanced Testimonial Section styles
+const TestimonialSection = styled(ServiceBlock)`
+  background: linear-gradient(135deg, #f9f9f9 0%, #f0f7e6 100%);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxjaXJjbGUgZmlsbC1vcGFjaXR5PSIuMDUiIGZpbGw9IiMwMDAiIGN4PSIyMCIgY3k9IjIwIiByPSIxIi8+PC9nPjwvc3ZnPg==');
+    opacity: 0.2;
+    z-index: 0;
+  }
+`;
+
+const TestimonialHeading = styled.div`
+  text-align: center;
+  margin-bottom: 4rem;
+  position: relative;
+  
+  h2 {
     margin-bottom: 1rem;
+  }
+  
+  p {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+`;
+
+const TestimonialsCarousel = styled.div`
+  display: flex;
+  gap: 2.5rem;
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+  justify-content: center;
+  
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+  }
+`;
+
+const TestimonialCard = styled.div`
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
+  position: relative;
+  flex: 1;
+  max-width: 380px;
+  transition: all 0.3s ease;
+  z-index: 1;
+  
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  }
+  
+  &::before {
+    content: '"';
+    position: absolute;
+    top: 2rem;
+    left: 2.5rem;
+    font-size: 5rem;
+    font-family: Georgia, serif;
+    color: ${theme.colors.secondary}20;
+    line-height: 1;
+    z-index: -1;
+  }
+`;
+
+const QuoteContent = styled.div`
+  font-size: 1.15rem;
+  color: ${theme.colors.text.secondary};
+  line-height: 1.8;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 1;
+`;
+
+const ClientInfo = styled.div`
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 1.5rem;
+`;
+
+const ClientAvatar = styled.div`
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  margin-right: 1rem;
+  border: 3px solid white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+`;
+
+const ClientDetails = styled.div`
+  h4 {
+    font-size: 1.1rem;
+    color: ${theme.colors.primary};
+    margin: 0 0 0.3rem;
+  }
+  
+  p {
+    color: ${theme.colors.secondary};
+    margin: 0;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+`;
+
+const TestimonialRating = styled.div`
+  margin-left: auto;
+  color: ${theme.colors.secondary};
+  font-size: 1.1rem;
+  display: flex;
+  gap: 0.2rem;
+`;
+
+const TestimonialControls = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  gap: 1rem;
+  position: relative;
+`;
+
+const TestimonialButton = styled.button`
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: 2px solid ${theme.colors.primary};
+  background: transparent;
+  color: ${theme.colors.primary};
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: ${theme.colors.primary};
+    color: white;
+  }
+`;
+
+// Specialty Service Section Components
+const SpecialtySection = styled(ServiceBlock)`
+  background: ${theme.colors.primary};
+  position: relative;
+  padding: 8rem 0;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxjaXJjbGUgZmlsbC1vcGFjaXR5PSIuMDUiIGZpbGw9IiNmZmYiIGN4PSIyMCIgY3k9IjIwIiByPSIxIi8+PC9nPjwvc3ZnPg==');
+    opacity: 0.1;
+    z-index: 0;
+  }
+`;
+
+const SpecialtyHeading = styled.div`
+  text-align: center;
+  margin-bottom: 5rem;
+  position: relative;
+  z-index: 1;
+  
+  h2 {
+    font-size: 3rem;
+    color: white;
+    display: inline-block;
     position: relative;
-    padding-bottom: 0.7rem;
+    margin-bottom: 2rem;
     
     &::after {
       content: '';
       position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 50px;
-      height: 3px;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
       background: ${theme.colors.secondary};
       border-radius: 2px;
     }
   }
   
-  p {
-    font-size: 1rem;
-    color: ${theme.colors.text.secondary};
-    line-height: 1.6;
-    margin-bottom: 1rem;
-  }
-  
-  ul {
-    padding-left: 1.2rem;
-    margin-bottom: 1.2rem;
-    
-    li {
-      margin-bottom: 0.5rem;
-      color: ${theme.colors.text.secondary};
-      position: relative;
-      font-size: 0.95rem;
-      line-height: 1.4;
-      
-      &::before {
-        content: '•';
-        color: ${theme.colors.secondary};
-        font-weight: bold;
-        position: absolute;
-        left: -1.2rem;
-      }
-    }
-  }
-  
-  .detail-icon {
-    font-size: 2.2rem;
+  p.subtitle {
+    font-size: 1.3rem;
     color: ${theme.colors.secondary};
+    font-weight: 500;
     margin-bottom: 1rem;
-    display: block;
-    text-align: center;
-  }
-  
-  .detail-cta {
-    margin-top: 1rem;
-    display: inline-block;
-    align-self: flex-start;
   }
 `;
 
+const SectionDescriptionLight = styled(SectionDescription)`
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.2rem;
+`;
+
+const SpecialtyGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.5rem;
+  position: relative;
+  z-index: 1;
+  
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+`;
+
+const SpecialtyCard = styled.div`
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: all 0.4s ease;
+  
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  }
+`;
+
+const SpecialtyHeader = styled.div`
+  padding: 2.5rem;
+  border-bottom: 1px solid #eaeaea;
+  
+  h3 {
+    font-size: 1.8rem;
+    color: ${theme.colors.primary};
+    margin-bottom: 1rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    
+    .icon {
+      color: ${theme.colors.secondary};
+      font-size: 1.8rem;
+    }
+  }
+  
+  p {
+    color: ${theme.colors.text.secondary};
+    line-height: 1.7;
+    margin: 0;
+    font-size: 1.1rem;
+  }
+`;
+
+// Add CardButton definition after ServiceButton
+const CardButton = styled(Link)<{primary?: boolean}>`
+  padding: 1rem 1.5rem;
+  background: ${props => props.primary ? theme.colors.primary : 'transparent'};
+  color: ${props => props.primary ? 'white' : theme.colors.primary};
+  border: 2px solid ${theme.colors.primary};
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+  flex: 1;
+  
+  &:hover {
+    background: ${props => props.primary ? theme.colors.secondary : theme.colors.primary};
+    color: ${props => props.primary ? theme.colors.primary : 'white'};
+    border-color: ${props => props.primary ? theme.colors.secondary : theme.colors.primary};
+    transform: translateY(-3px);
+  }
+`;
+
+// Add the SpecialtyItem component definition
+const SpecialtyItem = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  
+  .icon-container {
+    background: #f0f7e6;
+    width: 50px;
+    height: 50px;
+    min-width: 50px; /* Ensure the icon container doesn't shrink */
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    
+    .icon {
+      color: ${theme.colors.secondary};
+      font-size: 1.3rem;
+    }
+  }
+  
+  &:hover .icon-container {
+    background: ${theme.colors.secondary};
+    
+    .icon {
+      color: white;
+    }
+  }
+  
+  .content {
+    h4 {
+      font-size: 1.1rem;
+      color: ${theme.colors.primary};
+      margin-bottom: 0.5rem;
+    }
+    
+    p {
+      color: ${theme.colors.text.secondary};
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+  }
+`;
+
+// Animation Hook
+function useIsVisible(ref) {
+  const [isIntersecting, setIntersecting] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      setIntersecting(entry.isIntersecting);
+    }, {
+      threshold: 0.1
+    });
+    
+    const currentRef = ref.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+    
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [ref]);
+
+  return isIntersecting;
+}
+
 const Services = () => {
-  const animationRef = useElementOnScreen({
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.1
-  });
+  // Animation refs
+  const specialtyRef = useRef(null);
+  const processRef = useRef(null);
+  const mainServicesRef = useRef(null);
   
-  // Add state for active tab
-  const [activeTab, setActiveTab] = useState('formation');
+  const isSpecialtyVisible = useIsVisible(specialtyRef);
+  const isProcessVisible = useIsVisible(processRef);
+  const isMainServicesVisible = useIsVisible(mainServicesRef);
   
-  // Add state for the active immigration service
-  const [activeService, setActiveService] = useState<'immigration-tax' | 'international-returns' | 'visa-support' | 'fbar-compliance'>('immigration-tax');
-  
+  // Tab states for specialty services
+  const [activeImmigrationTab, setActiveImmigrationTab] = useState('planning');
+  const [activeTranslationTab, setActiveTranslationTab] = useState('translation');
+
+  // Main service data
   const services = [
     {
       id: 'tax-returns',
-      icon: faChartLine,
       title: 'Tax Returns & Planning',
-      description: 'Comprehensive tax preparation and strategic planning services tailored to your unique situation. We stay up-to-date with tax code changes to help maximize your returns and minimize liabilities through careful planning.',
-      image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80',
-      features: [
-        'Personal Tax Returns',
-        'Business Tax Returns',
-        'Tax Planning & Strategy',
-        'Tax Compliance Review',
-        'Audit Support',
-        'Electronic Filing'
-      ]
+      description: 'Strategic tax preparation and planning to minimize liability and maximize your financial position.',
+      icon: faFileInvoiceDollar,
+      category: 'tax',
+      features: ['Personal & Business Tax Returns', 'Tax Planning & Strategy', 'Tax Resolution Services']
     },
     {
       id: 'business-services',
+      title: 'Business Advisory',
+      description: 'Comprehensive accounting and consulting services to help your business thrive in today\'s competitive market.',
       icon: faBriefcase,
-      title: 'Business Services',
-      description: 'Complete business accounting and consulting services designed to help your business thrive. From startup formation to ongoing operations and growth strategy, we provide the financial expertise you need at every stage.',
-      image: 'https://images.unsplash.com/photo-1664575599736-c5197c684172?auto=format&fit=crop&q=80',
-      features: [
-        'Business Formation',
-        'Financial Statements',
-        'Business Consulting',
-        'Growth Strategy',
-        'Cash Flow Management',
-        'Financial Forecasting'
-      ]
+      category: 'business',
+      features: ['Business Formation & Structure', 'Financial Statement Preparation', 'Strategic Business Planning']
     },
     {
       id: 'payroll',
-      icon: faMoneyBillWave,
       title: 'Payroll & Bookkeeping',
-      description: 'Streamline your operations with our comprehensive payroll and bookkeeping services. We handle the details so you can focus on running your business, with accurate and timely reporting to keep you informed.',
-      image: 'https://images.unsplash.com/photo-1554224154-26032ffc0d07?auto=format&fit=crop&q=80',
-      features: [
-        'Payroll Processing',
-        'Bookkeeping Services',
-        'Financial Records',
-        'Monthly Reports',
-        'Tax Withholding',
-        'Employee Benefits Administration'
-      ]
+      description: 'Streamline your operations with accurate and reliable payroll processing and bookkeeping services.',
+      icon: faMoneyBillWave,
+      category: 'business',
+      features: ['Payroll Processing & Tax Filing', 'Comprehensive Bookkeeping', 'Financial Record Management']
     },
     {
-      id: 'immigration',
-      icon: faGlobe,
-      title: 'Immigration Services',
-      description: 'Specialized tax and financial services for international clients. We understand the complexities of cross-border taxation and provide expert guidance to help you navigate immigration financial requirements with confidence.',
-      image: 'https://images.unsplash.com/photo-1569974281888-f76d19c4b46d?auto=format&fit=crop&q=80',
-      features: [
-        'Immigration Tax Planning',
-        'International Tax Returns',
-        'Visa Financial Support',
-        'Cross-Border Services',
-        'Foreign Income Reporting',
-        'FBAR Compliance'
-      ]
+      id: 'cfo-services',
+      title: 'CFO Services',
+      description: 'Expert financial guidance and strategic planning without the cost of a full-time CFO.',
+      icon: faChartBar,
+      category: 'business',
+      features: ['Financial Analysis & Reporting', 'Cash Flow Management', 'Strategic Planning']
     },
     {
-      id: 'translation',
-      icon: faLanguage,
-      title: 'Translation & Notary',
-      description: 'Professional translation and notary services for all your documentation needs. From legal documents to personal certificates, we provide accurate translations and certified notary services to ensure your documents are properly prepared.',
-      image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80',
-      features: [
-        'Document Translation',
-        'Notary Services',
-        'Certified Copies',
-        'Legal Documentation',
-        'Multi-language Support',
-        'Fast Turnaround'
-      ]
+      id: 'wealth-management',
+      title: 'Wealth Management',
+      description: 'Personalized investment strategies and retirement planning to secure your financial future.',
+      icon: faUniversity,
+      category: 'personal',
+      features: ['Retirement Planning', 'Investment Strategy', 'Estate Planning']
+    },
+    {
+      id: 'compliance',
+      title: 'Regulatory Compliance',
+      description: 'Stay compliant with ever-changing regulations and avoid costly penalties.',
+      icon: faBalanceScale,
+      category: 'tax',
+      features: ['Tax Law Compliance', 'IRS Representation', 'Audit Support']
     }
   ];
 
-  // Business services tab data
-  const businessTabs = [
-    {
-      id: 'formation',
-      label: 'Business Formation',
-      title: 'Strategic Business Formation',
-      description: 'We guide you through the entity selection process to create the optimal business structure for your needs, maximizing tax benefits and providing liability protection.',
-      image: 'https://images.unsplash.com/photo-1664575197229-3bbebc281874?auto=format&fit=crop&q=80',
-      benefits: [
-        {
-          icon: faBriefcase,
-          title: 'Entity Selection',
-          desc: 'Expert advice on choosing between LLC, S-Corp, C-Corp, or Partnership structures.'
-        },
-        {
-          icon: faShieldAlt,
-          title: 'Liability Protection',
-          desc: 'Strategic formation to protect your personal assets from business risks.'
-        },
-        {
-          icon: faFileInvoiceDollar,
-          title: 'Tax Optimization',
-          desc: 'Structure your business to minimize tax burden and maximize deductions.'
-        },
-      ]
-    },
-    {
-      id: 'financial',
-      label: 'Financial Statements',
-      title: 'Comprehensive Financial Reporting',
-      description: 'Our team prepares accurate, detailed financial statements that provide insight into your business performance and help you make informed decisions.',
-      image: 'https://images.unsplash.com/photo-1554224155-6723b248e6f7?auto=format&fit=crop&q=80',
-      benefits: [
-        {
-          icon: faChartBar,
-          title: 'Performance Analysis',
-          desc: 'Clear insights into your financial position and business performance.'
-        },
-        {
-          icon: faHandshake,
-          title: 'Investor Relations',
-          desc: 'Professional statements that inspire confidence from investors and lenders.'
-        },
-        {
-          icon: faCheckCircle,
-          title: 'Regulatory Compliance',
-          desc: 'Ensure your financial reporting meets all regulatory requirements.'
-        },
-      ]
-    },
-    {
-      id: 'consulting',
-      label: 'Business Consulting',
-      title: 'Expert Business Consulting',
-      description: 'Our consultants work closely with you to identify opportunities, overcome challenges, and implement strategies that drive sustainable growth.',
-      image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80',
-      benefits: [
-        {
-          icon: faLightbulb,
-          title: 'Strategic Planning',
-          desc: 'Develop clear, actionable business plans aligned with your goals.'
-        },
-        {
-          icon: faChartLine,
-          title: 'Performance Improvement',
-          desc: 'Identify inefficiencies and implement solutions to boost performance.'
-        },
-        {
-          icon: faMoneyBillWave,
-          title: 'Cost Optimization',
-          desc: 'Analyze expenses and implement strategies to improve profitability.'
-        },
-      ]
-    },
-    {
-      id: 'growth',
-      label: 'Growth Strategy',
-      title: 'Data-Driven Growth Strategies',
-      description: 'We help you identify market opportunities and develop sustainable growth strategies based on solid financial analysis and market research.',
-      image: 'https://images.unsplash.com/photo-1533750349088-cd871a92f312?auto=format&fit=crop&q=80',
-      benefits: [
-        {
-          icon: faChartLine,
-          title: 'Market Expansion',
-          desc: 'Identify new markets and opportunities to scale your business.'
-        },
-        {
-          icon: faUsers,
-          title: 'Customer Acquisition',
-          desc: 'Develop strategies to attract and retain profitable customers.'
-        },
-        {
-          icon: faFileInvoiceDollar,
-          title: 'Financial Forecasting',
-          desc: 'Project future performance to make confident business decisions.'
-        },
-      ]
-    },
-  ];
-
-  // Find the active tab data
-  const activeTabData = businessTabs.find(tab => tab.id === activeTab) || businessTabs[0];
-
-  // Immigration service details with proper TypeScript interface
-  interface ImmigrationDetailType {
-    title: string;
-    icon: typeof faGlobe | typeof faFileInvoiceDollar | typeof faHandshake | typeof faShieldAlt;
-    description: string;
-    benefits: string[];
-  }
-  
-  const immigrationDetails: Record<'immigration-tax' | 'international-returns' | 'visa-support' | 'fbar-compliance', ImmigrationDetailType> = {
-    'immigration-tax': {
-      title: 'Immigration Tax Planning',
-      icon: faGlobe,
-      description: 'Our Immigration Tax Planning services help you navigate the complex tax regulations that affect non-US citizens and residents with foreign income and assets.',
-      benefits: [
-        'Personalized tax strategy for your specific immigration status',
-        'Identification of available deductions and credits based on residency status',
-        'Planning for dual-country tax obligations and treaty benefits',
-        'Guidance on tax implications of immigration status changes',
-        'Strategies to minimize global tax burden while remaining compliant'
-      ]
-    },
-    'international-returns': {
-      title: 'International Tax Returns',
-      icon: faFileInvoiceDollar,
-      description: 'We specialize in preparing accurate tax returns for U.S. residents with international income sources and assets, ensuring compliance with both U.S. and foreign tax laws.',
-      benefits: [
-        'Expert handling of complex international income reporting',
-        'Proper reporting of foreign income, assets, and financial accounts',
-        'Application of foreign tax credits to avoid double taxation',
-        'Filing of all required international information returns',
-        'Assistance with amended returns for previous years if needed'
-      ]
-    },
-    'visa-support': {
-      title: 'Visa Financial Support',
-      icon: faHandshake,
-      description: 'Our team provides the comprehensive financial documentation required for various visa applications, helping you meet the strict requirements set by immigration authorities.',
-      benefits: [
-        'Preparation of financial statements tailored to visa requirements',
-        'Documentation of sufficient financial resources for visa approval',
-        'Income verification and financial history documentation',
-        'Expert guidance on financial requirements for specific visa types',
-        'Assistance with responding to financial inquiries from USCIS'
-      ]
-    },
-    'fbar-compliance': {
-      title: 'FBAR Compliance',
-      icon: faShieldAlt,
-      description: 'We help U.S. citizens and residents comply with Foreign Bank Account Reporting (FBAR) requirements, avoiding severe penalties for non-compliance with these often-overlooked regulations.',
-      benefits: [
-        'Timely filing of FinCEN Form 114 (FBAR) to meet federal requirements',
-        'Proper disclosure of foreign financial accounts exceeding reporting thresholds',
-        'Guidance on FATCA compliance and Form 8938 requirements',
-        'Assistance with voluntary disclosure programs for past non-compliance',
-        'Ongoing monitoring of account values for reporting threshold changes'
-      ]
-    }
+  // Specialty service tab content
+  const immigrationTabContent = {
+    planning: [
+      {
+        title: 'Immigration Tax Planning',
+        description: 'Strategic tax planning for individuals relocating to or from the U.S.',
+        icon: faCheckCircle
+      },
+      {
+        title: 'Pre-Immigration Planning',
+        description: 'Tax strategies to implement before becoming a U.S. resident.',
+        icon: faLightbulb
+      },
+      {
+        title: 'Non-Resident Tax Returns',
+        description: 'Specialized tax return preparation for non-resident individuals.',
+        icon: faFileInvoiceDollar
+      },
+      {
+        title: 'International Tax Treaties',
+        description: 'Navigating complex international tax treaties and agreements.',
+        icon: faHandshake
+      }
+    ],
+    compliance: [
+      {
+        title: 'FBAR & FATCA Compliance',
+        description: 'Ensuring compliance with Foreign Bank Account Reporting requirements.',
+        icon: faShieldAlt
+      },
+      {
+        title: 'Foreign Asset Reporting',
+        description: 'Proper disclosure of foreign financial assets to avoid penalties.',
+        icon: faGlobe
+      },
+      {
+        title: 'Tax Residency Determination',
+        description: 'Analysis of tax residency status under U.S. and foreign laws.',
+        icon: faCalculator
+      },
+      {
+        title: 'Compliance Remediation',
+        description: 'Addressing past compliance issues through voluntary disclosure programs.',
+        icon: faUniversity
+      }
+    ],
+    consulting: [
+      {
+        title: 'Global Mobility Consulting',
+        description: 'Tax advice for internationally mobile employees and expatriates.',
+        icon: faBriefcase
+      },
+      {
+        title: 'Business Expansion Planning',
+        description: 'Tax implications of expanding business operations internationally.',
+        icon: faChartLine
+      },
+      {
+        title: 'Foreign Investment Advice',
+        description: 'Tax guidance for U.S. residents investing in foreign countries.',
+        icon: faMoneyBillWave
+      },
+      {
+        title: 'Exit Strategy Planning',
+        description: 'Tax considerations when leaving the U.S. tax system.',
+        icon: faCogs
+      }
+    ]
   };
+  
+  const translationTabContent = {
+    translation: [
+      {
+        title: 'Financial Document Translation',
+        description: 'Accurate translation of financial statements, tax documents, and more.',
+        icon: faFileInvoiceDollar
+      },
+      {
+        title: 'Certified Translations',
+        description: 'Official certified translations for legal and immigration purposes.',
+        icon: faCheckCircle
+      },
+      {
+        title: 'Legal Document Translation',
+        description: 'Translation of contracts, agreements, and legal correspondence.',
+        icon: faBookOpen
+      },
+      {
+        title: 'Immigration Document Translation',
+        description: 'Specialized translation of documents for immigration applications.',
+        icon: faGlobe
+      }
+    ],
+    notary: [
+      {
+        title: 'Notary Public Services',
+        description: 'Official document verification and notarization services.',
+        icon: faStamp
+      },
+      {
+        title: 'Mobile Notary',
+        description: 'Convenient notary services at your location of choice.',
+        icon: faCogs
+      },
+      {
+        title: 'Apostille Services',
+        description: 'Authentication of documents for international use.',
+        icon: faHandshake
+      },
+      {
+        title: 'Document Certification',
+        description: 'Official certification of copies and translations.',
+        icon: faCheckCircle
+      }
+    ],
+    documentation: [
+      {
+        title: 'Legal Document Preparation',
+        description: 'Preparation of legal documents requiring translation and notarization.',
+        icon: faBookOpen
+      },
+      {
+        title: 'Business Documentation',
+        description: 'Preparation of business documents for international use.',
+        icon: faBriefcase
+      },
+      {
+        title: 'Financial Documentation',
+        description: 'Preparation of financial documents for official purposes.',
+        icon: faMoneyBillWave
+      },
+      {
+        title: 'Immigration Documentation',
+        description: 'Preparation of documents for immigration applications.',
+        icon: faGlobe
+      }
+    ]
+  };
+
+  // Process steps
+  const processSteps = [
+    {
+      number: 1,
+      title: 'Initial Consultation',
+      description: 'We begin with a thorough discussion of your financial situation and goals.'
+    },
+    {
+      number: 2,
+      title: 'Customized Strategy',
+      description: 'Our experts develop a tailored plan based on your specific needs and objectives.'
+    },
+    {
+      number: 3,
+      title: 'Implementation',
+      description: 'We put your financial plan into action with expert precision and attention to detail.'
+    },
+    {
+      number: 4,
+      title: 'Ongoing Support',
+      description: 'We provide continuous guidance, adjusting strategies as your needs evolve.'
+    }
+  ];
+
+  // Update Testimonial section in the component
+  const testimonials = [
+    {
+      id: 1,
+      content: "Naseem CPA has transformed how we handle our business finances. Their expertise in tax planning saved us thousands of dollars last year alone. Their team is responsive, knowledgeable, and truly cares about our success.",
+      name: "Michael Johnson",
+      position: "CEO, Johnson Enterprises",
+      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+      rating: 5
+    },
+    {
+      id: 2,
+      content: "As an immigrant to the U.S., I was overwhelmed by the tax system here. The immigration tax services team at Naseem CPA guided me through the process and ensured I remained compliant while minimizing my tax liability.",
+      name: "Sarah Chen",
+      position: "Software Engineer",
+      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+      rating: 5
+    },
+    {
+      id: 3,
+      content: "The translation and notary services provided by Naseem CPA were exceptional. They helped me with all the necessary documentation for my business expansion, ensuring everything was properly certified and legally sound.",
+      name: "David Rodriguez",
+      position: "Small Business Owner",
+      avatar: "https://randomuser.me/api/portraits/men/67.jpg",
+      rating: 5
+    }
+  ];
 
   return (
     <ServicesSection>
+      {/* Hero Section */}
       <HeroSection>
         <Container>
           <HeroContent>
-            <HeroTitle>Our Services</HeroTitle>
+            <HeroTitle>Comprehensive Financial Solutions</HeroTitle>
             <HeroSubtitle>
-              Comprehensive financial solutions tailored to meet your specific needs. 
-              We provide expert services to help you achieve your financial goals.
+              Expert accounting, tax, and advisory services tailored to your unique needs.
+              We help individuals and businesses achieve financial success with confidence.
             </HeroSubtitle>
+            <HeroButton to="/contact">
+              Schedule a Free Consultation
+              <FontAwesomeIcon icon={faChevronRight} />
+            </HeroButton>
           </HeroContent>
         </Container>
       </HeroSection>
 
-      <div ref={animationRef}>
-        {/* Tax Returns Service - Keep original layout */}
-        <ServiceBlock id="tax-returns">
-          <Container>
-            <ServiceContent>
-              <ServiceInfo className="animate-on-scroll">
-                <h2>{services[0].title}</h2>
-                <p>{services[0].description}</p>
-                <ServiceFeatureList>
-                  {services[0].features.map((feature, i) => (
-                    <ServiceFeatureItem key={i}>
-                      <FontAwesomeIcon icon={faCheckCircle} className="icon" />
-                      {feature}
-                    </ServiceFeatureItem>
-                  ))}
-                </ServiceFeatureList>
-                <ServiceCTA to="/contact">
-                  Learn More
-                  <FontAwesomeIcon icon={faChevronRight} className="icon" />
-                </ServiceCTA>
-              </ServiceInfo>
-              <ServiceImage className="animate-on-scroll">
-                <img src={services[0].image} alt={services[0].title} />
-              </ServiceImage>
-            </ServiceContent>
-          </Container>
-        </ServiceBlock>
-
-        {/* Business Services - New Design with Tabs */}
-        <BusinessServiceBlock id="business-services">
-          <Container>
-            <BusinessContent>
-              <BusinessHeader className="animate-on-scroll">
-                <h2>{services[1].title}</h2>
-                <p>{services[1].description}</p>
-              </BusinessHeader>
-              
-              <BusinessTabsContainer>
-                <TabsWrapper>
-                  {businessTabs.map(tab => (
-                    <TabButton 
-                      key={tab.id}
-                      isActive={activeTab === tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className="animate-on-scroll"
-                    >
-                      {tab.label}
-                    </TabButton>
-                  ))}
-                </TabsWrapper>
+      {/* SECTION 1: Enhanced Professional Services */}
+      <ServiceBlock ref={mainServicesRef}>
+        <Container>
+          <SectionTitle>Our Professional Services</SectionTitle>
+          <SectionDescription>
+            We offer a comprehensive suite of financial services designed to help you navigate
+            complex financial matters with confidence and peace of mind.
+          </SectionDescription>
+          
+          <ProfessionalServices>
+            <ServiceGallery>
+              {services.map((service, idx) => {
+                const isLarge = idx % 3 === 0;
+                const isHorizontal = isLarge;
+                const hasImage = isLarge;
                 
-                <TabContent className="animate-on-scroll">
-                  <TabContentGrid>
-                    <TabContentImageWrapper>
-                      <img 
-                        src={activeTabData.image} 
-                        alt={activeTabData.title} 
-                      />
-                    </TabContentImageWrapper>
-                    
-                    <TabContentInfo>
-                      <h3>{activeTabData.title}</h3>
-                      <p>{activeTabData.description}</p>
-                      
-                      <BenefitsList>
-                        {activeTabData.benefits.map((benefit, index) => (
-                          <BenefitItem key={index}>
-                            <div className="icon-wrapper">
-                              <FontAwesomeIcon icon={benefit.icon} />
-                            </div>
-                            <div>
-                              <h4>{benefit.title}</h4>
-                              <p>{benefit.desc}</p>
-                            </div>
-                          </BenefitItem>
-                        ))}
-                      </BenefitsList>
-                      
-                      <ServiceCTA to="/contact">
-                        Get Expert Guidance
-                        <FontAwesomeIcon icon={faChevronRight} className="icon" />
-                      </ServiceCTA>
-                    </TabContentInfo>
-                  </TabContentGrid>
-                </TabContent>
-              </BusinessTabsContainer>
-            </BusinessContent>
-          </Container>
-        </BusinessServiceBlock>
-
-        {/* Payroll & Bookkeeping - Fix inline media queries */}
-        <PayrollServiceBlock id="payroll">
-          <Container>
-            <div className="animate-on-scroll" style={{ textAlign: 'center', marginBottom: '2rem' }}>
-              <h2 style={{ 
-                fontSize: '2.8rem', 
-                color: theme.colors.primary,
-                marginBottom: '1.5rem',
-                position: 'relative',
-                display: 'inline-block'
-              }}>
-                {services[2].title}
-                <span style={{ 
-                  position: 'absolute', 
-                  bottom: '-10px', 
-                  left: '50%', 
-                  transform: 'translateX(-50%)',
-                  width: '80px',
-                  height: '3px',
-                  background: theme.colors.secondary,
-                  borderRadius: '2px'
-                }}></span>
-              </h2>
-              <p style={{ 
-                fontSize: '1.1rem',
-                color: theme.colors.text.secondary,
-                lineHeight: '1.7',
-                marginBottom: '1rem',
-                maxWidth: '900px',
-                margin: '0 auto 2rem'
-              }}>
-                {services[2].description}
-              </p>
-            </div>
-            
-            <PayrollGrid>
-              <PayrollCard className="animate-on-scroll">
-                <div className="icon-wrapper">
-                  <FontAwesomeIcon icon={faMoneyBillWave} />
-                </div>
-                <h3>Payroll Processing</h3>
-                <p>Timely and accurate processing with direct deposits and tax handling.</p>
-              </PayrollCard>
-              
-              <PayrollCard className="animate-on-scroll">
-                <div className="icon-wrapper">
-                  <FontAwesomeIcon icon={faFileInvoiceDollar} />
-                </div>
-                <h3>Bookkeeping</h3>
-                <p>Comprehensive recording and organization of all financial transactions.</p>
-              </PayrollCard>
-            </PayrollGrid>
-            
-            <PayrollGrid style={{ marginTop: '0' }}>
-              <PayrollCard className="animate-on-scroll">
-                <div className="icon-wrapper">
-                  <FontAwesomeIcon icon={faChartBar} />
-                </div>
-                <h3>Financial Reports</h3>
-                <p>Detailed monthly and quarterly reports to track your business performance.</p>
-              </PayrollCard>
-              
-              <PayrollCard className="animate-on-scroll">
-                <div className="icon-wrapper">
-                  <FontAwesomeIcon icon={faCheckCircle} />
-                </div>
-                <h3>Tax Compliance</h3>
-                <p>Stay compliant with all tax regulations and filing requirements.</p>
-              </PayrollCard>
-            </PayrollGrid>
-            
-            <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-              <ServiceCTA to="/contact">
-                Streamline Your Operations
-                <FontAwesomeIcon icon={faChevronRight} className="icon" />
-              </ServiceCTA>
-            </div>
-          </Container>
-        </PayrollServiceBlock>
-
-        {/* Immigration & Translation Sections - Also fix inline media queries */}
-        <ImmigrationServiceBlock id="immigration">
-          <ImmigrationContainer>
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: '1fr 1fr',
-              gap: '4rem'
-            }} className="immigration-grid">
-              <div className="animate-on-scroll">
-                <h2 style={{ 
-                  fontSize: '2.5rem', 
-                  color: theme.colors.primary,
-                  marginBottom: '1.5rem',
-                  position: 'relative',
-                  paddingBottom: '1rem',
-                  display: 'inline-block'
-                }}>
-                  {services[3].title}
-                  <span style={{ 
-                    position: 'absolute', 
-                    bottom: '0',
-                    left: '0',
-                    width: '80px',
-                    height: '3px',
-                    background: theme.colors.secondary,
-                    borderRadius: '2px'
-                  }}></span>
-                </h2>
-                <p style={{ 
-                  fontSize: '1.1rem',
-                  color: theme.colors.text.secondary,
-                  lineHeight: '1.7',
-                  marginBottom: '2rem'
-                }}>
-                  {services[3].description}
-                </p>
+                // Image URLs for large cards
+                const imageUrls = [
+                  'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1111&q=80',
+                  'https://images.unsplash.com/photo-1554224155-1696413565d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1111&q=80',
+                  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1115&q=80'
+                ];
                 
-                <ImmigrationTimeline>
-                  <TimelineItem 
-                    className={activeService === 'immigration-tax' ? 'active' : ''}
-                    onClick={() => setActiveService('immigration-tax')}
-                  >
-                    <h3>Immigration Tax Planning</h3>
-                    <p>Strategic planning to ensure compliance with both U.S. and foreign tax regulations.</p>
-                  </TimelineItem>
-                  
-                  <TimelineItem 
-                    className={activeService === 'international-returns' ? 'active' : ''}
-                    onClick={() => setActiveService('international-returns')}
-                  >
-                    <h3>International Tax Returns</h3>
-                    <p>Expert preparation of tax returns for U.S. residents with foreign income and assets.</p>
-                  </TimelineItem>
-                  
-                  <TimelineItem 
-                    className={activeService === 'visa-support' ? 'active' : ''}
-                    onClick={() => setActiveService('visa-support')}
-                  >
-                    <h3>Visa Financial Support</h3>
-                    <p>Documentation and financial statements required for visa applications.</p>
-                  </TimelineItem>
-                  
-                  <TimelineItem 
-                    className={activeService === 'fbar-compliance' ? 'active' : ''}
-                    onClick={() => setActiveService('fbar-compliance')}
-                  >
-                    <h3>FBAR Compliance</h3>
-                    <p>Assistance with Foreign Bank Account Reports to meet federal requirements.</p>
-                  </TimelineItem>
-                </ImmigrationTimeline>
-                
-                <ImmigrationButton>
-                  <ServiceCTA to="/contact">
-                    Get Expert Guidance
-                    <FontAwesomeIcon icon={faChevronRight} className="icon" />
-                  </ServiceCTA>
-                </ImmigrationButton>
-              </div>
-              
-              <div className="animate-on-scroll" style={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
-                justifyContent: 'center',
-                alignItems: 'center' // Center horizontally
-              }}>
-                <DetailContent>
-                  <FontAwesomeIcon icon={immigrationDetails[activeService].icon} className="detail-icon" />
-                  <h3>{immigrationDetails[activeService].title}</h3>
-                  <p>{immigrationDetails[activeService].description}</p>
-                  <h4 style={{ 
-                    fontSize: '1.1rem',
-                    color: theme.colors.primary,
-                    marginBottom: '0.8rem'
-                  }}>
-                    How We Help You
-                  </h4>
-                  <ul>
-                    {immigrationDetails[activeService].benefits.map((benefit: string, index: number) => (
-                      <li key={index}>{benefit}</li>
-                    ))}
-                  </ul>
-                  <ServiceCTA to="/contact" className="detail-cta">
-                    Learn More
-                    <FontAwesomeIcon icon={faChevronRight} className="icon" />
-                  </ServiceCTA>
-                </DetailContent>
-              </div>
-            </div>
-          </ImmigrationContainer>
-        </ImmigrationServiceBlock>
+                return (
+                  <ServiceModule key={service.id} size={isLarge ? 'large' : 'small'}>
+                    <ServiceItem position={isHorizontal ? 'horizontal' : 'vertical'}>
+                      {hasImage && (
+                        <ServiceVisual bg={imageUrls[idx % imageUrls.length]}>
+                          <ServiceIconWrapper serviceCategory={service.id}>
+                            <FontAwesomeIcon icon={service.icon} />
+                          </ServiceIconWrapper>
+                        </ServiceVisual>
+                      )}
+                      <ServiceContent>
+                        {!hasImage && (
+                          <ServiceIconWrapper serviceCategory={service.id}>
+                            <FontAwesomeIcon icon={service.icon} />
+                          </ServiceIconWrapper>
+                        )}
+                        <h3>{service.title}</h3>
+                        <p>{service.description}</p>
+                        <ServiceFeatures>
+                          {service.features.map((feature, index) => (
+                            <li key={index}>
+                              <FontAwesomeIcon icon={faCheckCircle} className="icon" />
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ServiceFeatures>
+                        <ServiceActions>
+                          <ServiceButton to={`/contact?service=${service.id}`} variant="primary">
+                            Learn More
+                            <FontAwesomeIcon icon={faArrowAltCircleRight} className="icon" />
+                          </ServiceButton>
+                        </ServiceActions>
+                      </ServiceContent>
+                    </ServiceItem>
+                  </ServiceModule>
+                );
+              })}
+            </ServiceGallery>
+          </ProfessionalServices>
+        </Container>
+      </ServiceBlock>
 
-        {/* Translation & Notary - Unique Layout */}
-        <TranslationServiceBlock id="translation">
-          <Container>
-            <div style={{ textAlign: 'center', marginBottom: '2rem' }} className="animate-on-scroll">
-              <h2 style={{ 
-                fontSize: '2.8rem', 
-                color: theme.colors.primary, 
-                display: 'inline-block',
-                position: 'relative',
-                marginBottom: '1.5rem'
-              }}>
-                {services[4].title}
-                <span style={{ 
-                  position: 'absolute', 
-                  bottom: '-10px', 
-                  left: '50%', 
-                  transform: 'translateX(-50%)',
-                  width: '80px',
-                  height: '3px',
-                  background: theme.colors.secondary,
-                  borderRadius: '2px'
-                }}></span>
-              </h2>
-              <p style={{ 
-                maxWidth: '800px', 
-                margin: '0 auto', 
-                fontSize: '1.1rem',
-                color: theme.colors.text.secondary,
-                lineHeight: '1.7'
-              }}>
-                {services[4].description}
-              </p>
-            </div>
-            
-            <TranslationGrid>
-              <TranslationCard className="animate-on-scroll">
-                <h3>Document Translation</h3>
-                <ul>
-                  <li>
-                    <FontAwesomeIcon icon={faCheckCircle} className="icon" />
-                    Legal Documents
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faCheckCircle} className="icon" />
-                    Financial Records
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faCheckCircle} className="icon" />
-                    Personal Identification
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faCheckCircle} className="icon" />
-                    Business Contracts
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faCheckCircle} className="icon" />
-                    Technical Documents
-                  </li>
-                </ul>
-              </TranslationCard>
-              
-              <TranslationCard className="animate-on-scroll">
-                <h3>Notary Services</h3>
-                <ul>
-                  <li>
-                    <FontAwesomeIcon icon={faCheckCircle} className="icon" />
-                    Document Authentication
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faCheckCircle} className="icon" />
-                    Certified Copies
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faCheckCircle} className="icon" />
-                    Affidavits and Statements
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faCheckCircle} className="icon" />
-                    Power of Attorney
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faCheckCircle} className="icon" />
-                    Apostille Service
-                  </li>
-                </ul>
-              </TranslationCard>
-            </TranslationGrid>
-            
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'center', 
-              marginTop: '2rem' 
-            }}>
-              <div style={{ 
-                background: theme.colors.primary, 
-                borderRadius: '16px',
-                padding: '2rem',
-                maxWidth: '800px',
-                boxShadow: '0 15px 30px rgba(19, 42, 76, 0.2)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center'
-              }} className="animate-on-scroll">
-                <h3 style={{ 
-                  color: 'white', 
-                  fontSize: '1.8rem', 
-                  marginBottom: '1rem' 
-                }}>
-                  Certified For Your Peace of Mind
+      {/* SECTION 2: Enhanced Specialty Services */}
+      <SpecialtySection ref={specialtyRef}>
+        <Container>
+          <SpecialtyHeading>
+            <p className="subtitle">Working Across the Globe</p>
+            <h2>Around the World</h2>
+            <SectionDescriptionLight>
+              Our specialized services are designed to meet the unique needs of our diverse clientele,
+              providing expert guidance in areas requiring specialized knowledge and experience.
+            </SectionDescriptionLight>
+          </SpecialtyHeading>
+          
+          <SpecialtyGrid className={isSpecialtyVisible ? 'visible' : ''}>
+            {/* Immigration Tax Services */}
+            <SpecialtyCard>
+              <SpecialtyHeader>
+                <h3>
+                  <FontAwesomeIcon icon={faGlobe} className="icon" />
+                  Immigration Tax Services
                 </h3>
-                <p style={{ 
-                  color: 'rgba(255, 255, 255, 0.9)', 
-                  textAlign: 'center', 
-                  marginBottom: '1.5rem',
-                  fontSize: '1.1rem',
-                  lineHeight: '1.7'
-                }}>
-                  Our translation and notary services meet the highest standards of accuracy and legal compliance, 
-                  accepted by all government agencies and institutions.
+                <p>
+                  Navigating the U.S. tax system as an international individual or business requires specialized knowledge. Our immigration tax services provide comprehensive support for non-citizens and international businesses.
                 </p>
-                <ServiceCTA to="/contact" style={{ 
-                  background: 'white',
-                  color: theme.colors.primary
-                }}>
-                  Request Service
-                  <FontAwesomeIcon icon={faChevronRight} className="icon" />
-                </ServiceCTA>
-              </div>
-            </div>
-          </Container>
-        </TranslationServiceBlock>
-      </div>
+              </SpecialtyHeader>
+              
+              <ServiceTabs>
+                <ServiceTab 
+                  active={activeImmigrationTab === 'planning'}
+                  onClick={() => setActiveImmigrationTab('planning')}
+                >
+                  Tax Planning
+                </ServiceTab>
+                <ServiceTab 
+                  active={activeImmigrationTab === 'compliance'}
+                  onClick={() => setActiveImmigrationTab('compliance')}
+                >
+                  Compliance
+                </ServiceTab>
+                <ServiceTab 
+                  active={activeImmigrationTab === 'consulting'}
+                  onClick={() => setActiveImmigrationTab('consulting')}
+                >
+                  Consulting
+                </ServiceTab>
+              </ServiceTabs>
+              
+              <ServiceTabContent>
+                <ServiceList>
+                  {immigrationTabContent[activeImmigrationTab].map((service, index) => (
+                    <SpecialtyItem key={index}>
+                      <div className="icon-container">
+                        <FontAwesomeIcon icon={service.icon} className="icon" />
+                      </div>
+                      <div className="content">
+                        <h4>{service.title}</h4>
+                        <p>{service.description}</p>
+                      </div>
+                    </SpecialtyItem>
+                  ))}
+                </ServiceList>
+              </ServiceTabContent>
+              
+              <CardActions>
+                <CardButton to="/contact?service=immigration-tax" primary={true}>
+                  Schedule Consultation
+                </CardButton>
+                <CardButton to="/services/immigration-tax">
+                  Learn More
+                </CardButton>
+              </CardActions>
+            </SpecialtyCard>
+            
+            {/* Translation & Notary Services */}
+            <SpecialtyCard>
+              <SpecialtyHeader>
+                <h3>
+                  <FontAwesomeIcon icon={faLanguage} className="icon" />
+                  Translation & Notary Services
+                </h3>
+                <p>
+                  Clear communication is essential in financial and legal matters. Our professional translation and notary services ensure your documents are accurately translated and properly certified.
+                </p>
+              </SpecialtyHeader>
+              
+              <ServiceTabs>
+                <ServiceTab 
+                  active={activeTranslationTab === 'translation'}
+                  onClick={() => setActiveTranslationTab('translation')}
+                >
+                  Translation
+                </ServiceTab>
+                <ServiceTab 
+                  active={activeTranslationTab === 'notary'}
+                  onClick={() => setActiveTranslationTab('notary')}
+                >
+                  Notary
+                </ServiceTab>
+                <ServiceTab 
+                  active={activeTranslationTab === 'documentation'}
+                  onClick={() => setActiveTranslationTab('documentation')}
+                >
+                  Documentation
+                </ServiceTab>
+              </ServiceTabs>
+              
+              <ServiceTabContent>
+                <ServiceList>
+                  {translationTabContent[activeTranslationTab].map((service, index) => (
+                    <SpecialtyItem key={index}>
+                      <div className="icon-container">
+                        <FontAwesomeIcon icon={service.icon} className="icon" />
+                      </div>
+                      <div className="content">
+                        <h4>{service.title}</h4>
+                        <p>{service.description}</p>
+                      </div>
+                    </SpecialtyItem>
+                  ))}
+                </ServiceList>
+              </ServiceTabContent>
+              
+              <CardActions>
+                <CardButton to="/contact?service=translation-notary" primary={true}>
+                  Schedule Consultation
+                </CardButton>
+                <CardButton to="/services/translation-notary">
+                  Learn More
+                </CardButton>
+              </CardActions>
+            </SpecialtyCard>
+          </SpecialtyGrid>
+          
+          <StatsContainer>
+            <StatItem>
+              <div className="value">32</div>
+              <div className="label">Countries Served</div>
+            </StatItem>
+            <StatItem>
+              <div className="value">2406</div>
+              <div className="label">Successful Projects</div>
+            </StatItem>
+            <StatItem>
+              <div className="value">120</div>
+              <div className="label">Expert Team Members</div>
+            </StatItem>
+            <StatItem>
+              <div className="value">100%</div>
+              <div className="label">Customer Satisfaction</div>
+            </StatItem>
+          </StatsContainer>
+        </Container>
+      </SpecialtySection>
 
+      {/* SECTION 3: Our Process */}
+      <ProcessSection ref={processRef}>
+        <Container>
+          <SectionTitle>Our Client-Centered Process</SectionTitle>
+          <SectionDescription>
+            We follow a proven process to ensure exceptional results and complete client satisfaction
+            from our first meeting through ongoing support.
+          </SectionDescription>
+          
+          <ProcessStepsContainer className={isProcessVisible ? 'visible' : ''}>
+            {processSteps.map((step) => (
+              <ProcessStep key={step.number}>
+                <StepNumber>{step.number}</StepNumber>
+                <StepContent>
+                  <h4>{step.title}</h4>
+                  <p>{step.description}</p>
+                </StepContent>
+              </ProcessStep>
+            ))}
+          </ProcessStepsContainer>
+        </Container>
+      </ProcessSection>
+
+      {/* NEW SECTION 4: Enhanced Testimonials */}
+      <TestimonialSection>
+        <Container>
+          <TestimonialHeading>
+            <SectionTitle>What Our Clients Say</SectionTitle>
+            <SectionDescription>
+              Don't just take our word for it. Hear what our clients have to say about their experiences working with our team.
+            </SectionDescription>
+          </TestimonialHeading>
+          
+          <TestimonialsCarousel>
+            {testimonials.slice(0, 3).map(testimonial => (
+              <TestimonialCard key={testimonial.id}>
+                <QuoteContent>
+                  {testimonial.content}
+                </QuoteContent>
+                
+                <ClientInfo>
+                  <ClientAvatar style={{ backgroundImage: `url("${testimonial.avatar}")` }} />
+                  <ClientDetails>
+                    <h4>{testimonial.name}</h4>
+                    <p>{testimonial.position}</p>
+                  </ClientDetails>
+                  <TestimonialRating>
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <FontAwesomeIcon key={i} icon={faStar} />
+                    ))}
+                  </TestimonialRating>
+                </ClientInfo>
+              </TestimonialCard>
+            ))}
+          </TestimonialsCarousel>
+          
+          <TestimonialControls>
+            <TestimonialButton>
+              <FontAwesomeIcon icon={faChevronLeft} />
+            </TestimonialButton>
+            <TestimonialButton>
+              <FontAwesomeIcon icon={faChevronRight} />
+            </TestimonialButton>
+          </TestimonialControls>
+        </Container>
+      </TestimonialSection>
+
+      {/* SECTION 5: Enhanced CTA */}
       <CTASection>
         <Container>
           <CTAContent>
-            <h2>Ready to Get Started?</h2>
+            <h2>Ready to Take Control of Your Finances?</h2>
             <p>
-              Schedule a free consultation with our team and discover how we can help
-              you achieve your financial goals with confidence.
+              Our team of certified professionals is ready to help you navigate complex financial matters
+              with confidence. Schedule a consultation today to discover how we can help you achieve your financial goals.
             </p>
             <CTAButton to="/contact">
-              Get Started Today
+              Schedule Your Free Consultation
               <FontAwesomeIcon icon={faChevronRight} className="icon" />
             </CTAButton>
           </CTAContent>
         </Container>
       </CTASection>
-      
-      <style>
-        {`
-          .animate-on-scroll {
-            opacity: 0;
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-          }
-          
-          .animate-on-scroll.visible {
-            opacity: 1;
-            transform: translateX(0);
-          }
-          
-          .business-card {
-            transform: translateY(20px);
-            opacity: 0;
-            transition: all 0.5s ease;
-          }
-          
-          .business-card.visible {
-            transform: translateY(0);
-            opacity: 1;
-          }
-          
-          .business-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-          }
-        `}
-      </style>
     </ServicesSection>
   );
 };
 
-export default Services; 
+export default Services;

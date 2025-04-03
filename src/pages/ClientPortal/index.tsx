@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserCircle, faLock, faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { theme } from '../../styles/theme';
 
 const ClientPortalSection = styled.section`

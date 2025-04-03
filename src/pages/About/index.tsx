@@ -1,27 +1,19 @@
 import styled, { keyframes } from 'styled-components';
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
-  faQuoteLeft, 
-  faChevronRight, 
-  faStar, 
+  faBuilding, 
+  faHandshake, 
+  faAward, 
+  faClock,
+  faQuoteLeft,
+  faStar,
   faCalendarCheck,
-  faAward,
-  faShieldHalved,
-  faLightbulb,
-  faUsers,
-  faFileInvoice,
-  faCheckCircle
 } from '@fortawesome/free-solid-svg-icons';
 import { theme } from '../../styles/theme';
-import { Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 
 // Animation keyframes
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
 const scaleIn = keyframes`
   from { transform: scale(0.85); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
@@ -35,21 +27,6 @@ const slideInLeft = keyframes`
 const slideInRight = keyframes`
   from { transform: translateX(70px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
-`;
-
-const pulse = keyframes`
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-`;
-
-const shimmer = keyframes`
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
 `;
 
 const countUp = keyframes`
@@ -644,7 +621,7 @@ const About = () => {
               </p>
             </ValueCard>
             <ValueCard>
-              <FontAwesomeIcon icon={faShieldHalved} className="icon" />
+              <FontAwesomeIcon icon={faHandshake} className="icon" />
               <h3>Integrity</h3>
               <p>
                 We maintain the highest standards of professional ethics, ensuring
@@ -652,7 +629,7 @@ const About = () => {
               </p>
             </ValueCard>
             <ValueCard>
-              <FontAwesomeIcon icon={faLightbulb} className="icon" />
+              <FontAwesomeIcon icon={faClock} className="icon" />
               <h3>Innovation</h3>
               <p>
                 We leverage the latest technology and best practices to deliver
