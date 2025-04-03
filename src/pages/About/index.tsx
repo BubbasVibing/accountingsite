@@ -14,6 +14,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { theme } from '../../styles/theme';
 import { Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 
 // Animation keyframes
 const fadeIn = keyframes`
@@ -51,6 +52,11 @@ const shimmer = keyframes`
   }
 `;
 
+const countUp = keyframes`
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
 const AboutSection = styled.div`
   background: white;
 `;
@@ -71,7 +77,7 @@ const Container = styled.div`
 
 const HeroContent = styled.div`
   text-align: center;
-  color: ${theme.colors.primary};
+  color: #132a4c;
   max-width: 800px;
   margin: 0 auto;
   background: rgba(255, 255, 255, 0.92);
@@ -87,6 +93,7 @@ const HeroTitle = styled.h1`
   font-weight: 800;
   position: relative;
   display: inline-block;
+  color: #132a4c;
 
   &::after {
     content: '';
@@ -104,7 +111,7 @@ const HeroTitle = styled.h1`
 const HeroSubtitle = styled.p`
   font-size: 1.2rem;
   line-height: 1.8;
-  color: ${theme.colors.text.secondary};
+  color: #132a4c;
   margin-top: 1.5rem;
 `;
 
@@ -130,7 +137,7 @@ const StoryContent = styled.div`
 
   h2 {
     font-size: 2.5rem;
-    color: ${theme.colors.primary};
+    color: #132a4c;
     margin-bottom: 1.5rem;
     position: relative;
     padding-bottom: 1rem;
@@ -149,7 +156,7 @@ const StoryContent = styled.div`
 
   p {
     font-size: 1.1rem;
-    color: ${theme.colors.text.secondary};
+    color: #132a4c;
     line-height: 1.8;
     margin-bottom: 1.5rem;
   }
@@ -181,12 +188,9 @@ const StoryImage = styled.div`
 `;
 
 const MetricsSection = styled.div`
-  margin-top: 6rem;
-  padding: 3rem 2rem;
+  margin-top: 4rem;
+  padding: 2rem;
   position: relative;
-  animation: ${fadeIn} 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-  animation-delay: 0.3s;
-  opacity: 0;
 `;
 
 const MetricsWrapper = styled.div`
@@ -206,105 +210,74 @@ const MetricsWrapper = styled.div`
   }
 `;
 
+const useCountUp = (end: number, duration: number = 2000, isVisible: boolean) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!isVisible) return;
+
+    let startTime: number;
+    let animationFrameId: number;
+
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime;
+      const progress = currentTime - startTime;
+      const percentage = Math.min(progress / duration, 1);
+
+      setCount(Math.floor(end * percentage));
+
+      if (percentage < 1) {
+        animationFrameId = requestAnimationFrame(animate);
+      }
+    };
+
+    animationFrameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [end, duration, isVisible]);
+
+  return count;
+};
+
 const MetricNumber = styled.div`
-  font-size: 4rem;
+  font-size: 3.5rem;
   font-weight: 800;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
   font-family: 'Poppins', sans-serif;
-  transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
-  background: linear-gradient(90deg, ${theme.colors.primary}, #1a3a6b);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-size: 200% 100%;
-  background-position: left;
-  position: relative;
+  color: ${theme.colors.primary};
+  transition: transform 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
   
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -0.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50px;
-    height: 4px;
-    background: ${theme.colors.secondary};
-    border-radius: 4px;
-    box-shadow: 0 3px 10px ${theme.colors.secondary}60;
+  &.animate {
+    animation: ${countUp} 0.6s ease forwards;
   }
 `;
 
 const MetricItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  z-index: 2;
   background: white;
-  padding: 3rem 2rem 2.5rem;
-  border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.07);
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-  overflow: hidden;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
   text-align: center;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: linear-gradient(
-      45deg, 
-      transparent, 
-      ${theme.colors.secondary}20, 
-      transparent, 
-      ${theme.colors.primary}15
-    );
-    background-size: 200% 100%;
-    animation: ${shimmer} 6s infinite linear paused;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-  }
-  
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 5px;
-    background: linear-gradient(90deg, ${theme.colors.secondary}, ${theme.colors.primary}80);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
-  }
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
   
   &:hover {
-    transform: translateY(-15px) scale(1.03);
-    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.12);
-    
-    &::before {
-      opacity: 1;
-      animation-play-state: running;
-    }
-    
-    &::after {
-      transform: scaleX(1);
-    }
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: ${theme.colors.secondary};
     
     ${MetricNumber} {
-      transform: scale(1.1);
-      background-position: right;
+      transform: scale(1.05);
     }
   }
 `;
 
 const MetricLabel = styled.div`
   color: ${theme.colors.text.secondary};
-  font-size: 1.2rem;
-  line-height: 1.4;
+  font-size: 1.1rem;
   font-weight: 500;
-  margin-top: 0.8rem;
-  letter-spacing: 0.5px;
+  line-height: 1.4;
 `;
 
 const ValuesSection = styled.section`
@@ -573,6 +546,36 @@ const CTAButton = styled(Link)`
 `;
 
 const About = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const metricsRef = useRef<HTMLDivElement>(null);
+
+  const yearsCount = useCountUp(15, 1500, isVisible);
+  const clientsCount = useCountUp(5000, 2000, isVisible);
+  const returnsCount = useCountUp(25000, 2500, isVisible);
+  const satisfactionCount = useCountUp(98, 1500, isVisible);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (metricsRef.current) {
+      observer.observe(metricsRef.current);
+    }
+
+    return () => {
+      if (metricsRef.current) {
+        observer.unobserve(metricsRef.current);
+      }
+    };
+  }, []);
+
   return (
     <AboutSection>
       <HeroSection>
@@ -603,25 +606,25 @@ const About = () => {
             </StoryImage>
           </StoryGrid>
 
-          <MetricsSection>
+          <MetricsSection ref={metricsRef}>
             <MetricsWrapper>
               <MetricItem>
-                <MetricNumber>15+</MetricNumber>
+                <MetricNumber className={isVisible ? 'animate' : ''}>{yearsCount}+</MetricNumber>
                 <MetricLabel>Years of Excellence</MetricLabel>
               </MetricItem>
               
               <MetricItem>
-                <MetricNumber>5,000+</MetricNumber>
+                <MetricNumber className={isVisible ? 'animate' : ''}>{clientsCount}+</MetricNumber>
                 <MetricLabel>Happy Clients</MetricLabel>
               </MetricItem>
               
               <MetricItem>
-                <MetricNumber>25,000+</MetricNumber>
+                <MetricNumber className={isVisible ? 'animate' : ''}>{returnsCount}+</MetricNumber>
                 <MetricLabel>Tax Returns Filed</MetricLabel>
               </MetricItem>
               
               <MetricItem>
-                <MetricNumber>98%</MetricNumber>
+                <MetricNumber className={isVisible ? 'animate' : ''}>{satisfactionCount}%</MetricNumber>
                 <MetricLabel>Client Satisfaction</MetricLabel>
               </MetricItem>
             </MetricsWrapper>

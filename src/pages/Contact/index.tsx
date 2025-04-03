@@ -10,7 +10,7 @@ const ContactSection = styled.section`
 
 const HeroSection = styled.div`
   background: url('/images/philadelphia.png') center/cover no-repeat;
-  padding: 8rem 2rem;
+  padding: 10rem 2rem 6rem;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -23,7 +23,7 @@ const HeroSection = styled.div`
     right: 0;
     bottom: 0;
     background: ${theme.colors.primary};
-    opacity: 0.75;
+    opacity: 0.7;
   }
 
   &::after {
@@ -48,21 +48,18 @@ const HeroContent = styled.div`
 `;
 
 const HeroTitle = styled.h1`
-  font-size: 4rem;
+  font-size: 3.5rem;
   color: white;
   margin-bottom: 1.5rem;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 2px;
   position: relative;
   display: inline-block;
-  font-family: 'Poppins', sans-serif;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 
   &::after {
     content: '';
     position: absolute;
-    bottom: -15px;
+    bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
     width: 100px;
@@ -76,12 +73,11 @@ const HeroSubtitle = styled.p`
   font-size: 1.2rem;
   color: rgba(255, 255, 255, 0.95);
   line-height: 1.8;
-  margin-bottom: 2rem;
+  margin-top: 1.5rem;
   font-weight: 400;
-  max-width: 700px;
+  max-width: 800px;
   margin-left: auto;
   margin-right: auto;
-  font-family: 'Inter', sans-serif;
 `;
 
 const ContentSection = styled.section`
